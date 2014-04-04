@@ -30,6 +30,17 @@ node['mysql']['server']['packages'].each do |name|
   end
 end
 
+# temporary workaround for docker added by mbautin.
+# This solves the problem manifesting as the following error message:
+# ERROR: 1050  Table 'plugin' already exist
+bash 'docker-workaround' do
+  code '( mysqld_safe --skip-syslog & ); sleep 1; pkill -9 mysqld_safe'
+end
+
+service 'mysql' do
+  action [:enable, :start]
+end
+
 node['mysql']['server']['directories'].each do |key, value|
   directory value do
     owner     'mysql'
