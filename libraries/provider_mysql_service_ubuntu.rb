@@ -53,6 +53,15 @@ class Chef
               action :install
             end
 
+            # temporary workaround for docker added by mbautin.
+            # This solves the problem manifesting as the following error message:
+            # ERROR: 1050  Table 'plugin' already exist
+            bash 'docker-workaround' do
+              code '( mysqld_safe --skip-syslog & ); sleep 1; pkill -9 mysqld_safe'
+              not_if 'pgrep mysqld'
+            end
+
+
             # service
             service 'mysql' do
               provider Chef::Provider::Service::Upstart
