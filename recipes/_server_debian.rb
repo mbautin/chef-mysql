@@ -35,6 +35,7 @@ end
 # ERROR: 1050  Table 'plugin' already exist
 bash 'docker-workaround' do
   code '( mysqld_safe --skip-syslog & ); sleep 1; pkill -9 mysqld_safe'
+  not_if 'pgrep mysqld'
 end
 
 service 'mysql' do
